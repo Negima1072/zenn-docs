@@ -2,12 +2,12 @@
 title: "最もかんたんにログインせずニコニコ動画のコメントを取得する"
 emoji: "🍣"
 type: "tech" # tech: 技術記事 / idea: アイデア
-topics: ["niconico","nicovideo","api","ニコニコ動画"]
+topics: ["python","niconico","nicovideo","api","ニコニコ動画"]
 published: true
 ---
 
 ニコニコ動画のコメントサーバーが新サーバーに移行されたため一部コメント取得の方法が変わっていた為紹介します。
-@[card](https://blog.nicovideo.jp/niconews/141893.html)
+https://blog.nicovideo.jp/niconews/141893.html
 
 流れとしては
 1. ニコニコ動画の動画ページHTMLから情報を取得
@@ -18,7 +18,7 @@ https://qiita.com/tor4kichi/items/74939b49954d3e72d789
 
 # 実践
 ## 1. リクエストするための情報を取得
-ニコニコ動画の動画に関する情報は`#js-initial-watch-data`上の`data-api-data`属性にJSON形式であります。
+ニコニコ動画の動画に関する情報は`#js-initial-watch-data`上の`data-api-data`属性にJSON形式で存在します。
 ![](/images/howto-get-nicovideo-comments/sc01.png)
 
 ここで取得するものは`data-api-data`の`comment.threads`以下です。
