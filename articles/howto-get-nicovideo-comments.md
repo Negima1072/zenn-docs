@@ -3,7 +3,7 @@ title: "最もかんたんにログインせずニコニコ動画のコメント
 emoji: "🍣"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["niconico","nicovideo","api","ニコニコ動画"]
-published: false
+published: true
 ---
 
 ニコニコ動画のコメントサーバーが新サーバーに移行されたため一部コメント取得の方法が変わっていた為紹介します。
