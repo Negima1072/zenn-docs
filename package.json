@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "preview": "npx zenn preview",
+    "new article": "npx zenn new:article",
     "git": "git add . && git commit -m \"Update from VSCode\" && git push origin main"
   },
   "keywords": [],
