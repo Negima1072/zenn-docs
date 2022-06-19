@@ -65,7 +65,33 @@ res = requests.post(url, headers=headers).json()
 nvComment = res["data"]["comment"]["nvComment"]
 ```
 
-### 動画ページを見る
+### APIサーバーを叩く(ログイン不必要)
+こちらはログイン情報が必要ないAPIです
+※新しく見つけたので更新しました。
+```python
+import requests, random, string
+
+movieId = "[動画ID(ex. sm9]"
+
+headers = {
+  "X-Frontend-Id": "6",
+  "X-Frontend-Version": "0"
+}
+
+actionTrackId = \
+  "".join(random.choice(string.ascii_letters + string.digits) for _ in range(10)) \
+  + "_" \
+  + str(random.randrange(10**(12),10**13))
+
+url = "https://www.nicovideo.jp/api/watch/v3_guest/{}?actionTrackId={}" \
+  .format(movieId, actionTrackId)
+
+res = requests.post(url, headers=headers).json()
+
+nvComment = res["data"]["comment"]["nvComment"]
+```
+
+#### 動画ページを見る
 こちらはログイン情報がなくてもアクセスすることができます。
 ```python
 from bs4 import BeautifulSoup
@@ -287,3 +313,7 @@ res = requests.post(url, json.dumps(params), headers=headers).json()
 # まとめ
 適当にまとめてみましたがわかりにくい！！
 なにか問題があればprかコメ欄でお願いします。
+
+#### 追記
+ニコ動アプリもニコ生アプリもNicoBoxもログインするかゲストアカウントを作成するかで必ずユーザーデータが紐付けられている上、ログインしなくても見れるPCブラウザではHTMLパースでしか取得できない。ゲストアカウントはAPIで動画情報取得できないのかー
+モバイル版のブラウザのデータ見てたときー＞はぁなんだよv3_guestって！！！（泣）
