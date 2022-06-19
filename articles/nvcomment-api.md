@@ -3,7 +3,7 @@ title: "[新サーバー対応版]ニコニコ動画のコメントに関するT
 emoji: "🎥"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["python","niconico","nicovideo","api","ニコニコ動画"]
-published: false
+published: true
 ---
 
 # はじめに
@@ -13,11 +13,12 @@ published: false
 
 # TL;DR
 - コメントサーバーからコメント一覧を取得する
-- コメント取得のTips
+- 過去ログのコメントを取得する
 - 通常コメントを投稿する
 
 # 準備
 コメントサーバーにリクエストを送る際、ログイン情報が必要な場合があります。その場合以下の2つ方法でセッションを取得してください。ログインが必要な際は項の名前に`ログイン必須`と記載しています。
+ログインしていなくてもコメントの取得はできるので飛ばしてもらっても構いません。
 
 ## ブラウザから取得する
 Chromeでの方法を記載しますが他のブラウザでも同じようにできると思います。
@@ -173,3 +174,118 @@ https://gist.github.com/Negima1072/7fd0f7a3be5eae97e553c46c5066e1b2#file-comment
 |------|----|
 |truck |直近1000コメント|
 |leaf  |1分おきに100コメントを配置すす場合truckで足りない部分を補完したコメント|
+
+## 注意
+これでコメント一覧を取得できました。やったね！！
+とは行きません。このAPIはレートリミットがついています。
+1分間に60リクエストまでなので気をつけましょう。
+
+## スレッドキーの再取得
+
+# 過去ログのコメントを取得する
+さて、最近（動画上に表示される）のコメントの取得はできるようになりました。次は過去ログの取得です。
+
+## コメントサーバーにPOSTする
+通常コメントの`params.additionals`に以下のように加えます。
+
+```python
+import requests
+
+unixTime = 1655558820 #コメントを取得したいUNIX時間
+
+headers = {
+  "X-Frontend-Id": "6",
+  "X-Frontend-Version": "0",
+  "Content-Type": "application/json"
+}
+
+params = {
+  "params": nvComment["params"],
+  "additionals": {
+    "when": unixTime
+  },
+  "threadKey": nvComment["threadKey"]
+}
+
+url = nvComment["server"] + "/v1/threads"
+
+res = requests.post(url, json.dumps(params), headers=headers).json()
+```
+
+## スレッドキーの再取得
+
+# 通常コメントを投稿する(ログイン必須)
+次はコメントを投稿していきましょう。
+
+## 1. PostKeyを取得する
+まずはPostKeyを取得します。
+
+```python
+import requests
+
+threadId = nvComment["params"]["targets"][n]["id"]
+
+url = "https://nvapi.nicovideo.jp/v1/comment/keys/post?threadId={}".format(threadId)
+
+res = requests.get(url, headers=headers).json()
+
+postkey = res["data"]["postKey"]
+```
+
+以下のレスポンスが帰ってきます。
+```json
+{
+  "meta": {
+    "status": 200
+  },
+  "data": {
+    "postKey": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJqdGkiOiI2MmF*************6ZJhs5QKSMtBoyXrVEwpnd8UwZulf6ZE-lHJx2kSrmZ3kY4kW4rtUbT2_9f0aHQ"
+  }
+}
+```
+
+## 2. コメントサーバーにPOSTする
+コメントサーバーにコメントデータをPOSTします。
+
+```python
+import requests
+
+headers = {
+  "X-Frontend-Id": "6",
+  "X-Frontend-Version": "0",
+  "Content-Type": "application/json"
+}
+
+params = {
+  "videoId": "so30413239", #動画ID
+  "commands": [ #コマンドリスト
+    "small"
+  ],
+  "body": "わーい", #コメント内容
+  "vposMs": 4000, #コメント投稿時間
+  "postKey": postKey #Postkey
+}
+
+threadId = nvComment["params"]["targets"][n]["id"]
+
+url = "https://nvcomment.nicovideo.jp/v1/threads/{}/comments".format(threadId)
+
+res = requests.post(url, json.dumps(params), headers=headers).json()
+```
+
+以下のレスポンスが帰ってきます
+```json
+{
+  "meta": {
+    "status": 201 //Created
+  },
+  "data": {
+    "no": 2550510, //動画内のコメント番号
+    "id": "988079784753934336" //ユニークなコメントID
+  }
+}
+```
+
+# まとめ
+適当にまとめてみましたがわかりにくい！！
+なにか問題があればprかコメ欄でお願いします。
