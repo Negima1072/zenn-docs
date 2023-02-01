@@ -6,6 +6,10 @@ topics: ["python","niconico","nicovideo","api","ニコニコ動画"]
 published: true
 ---
 
+:::message alert
+現在、アップロードAPIが新しくなって下記の方法では動画を投稿できないことを確認しています。
+:::
+
 ニコニコ動画の動画をAPIを用いて外部から投稿するやり方をまとめました。
 
 手順としては
