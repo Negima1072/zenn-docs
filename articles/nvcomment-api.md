@@ -238,6 +238,26 @@ res = requests.post(url, json.dumps(params), headers=headers).json()
 
 ## スレッドキーの再取得
 
+`threadKey`は１０分もしないうちに有効期限が切れてしまうため、それ以降にコメントを取得するには再度上記のv3APIを叩くか、keyを再取得する必要があります。
+
+```python
+import requests
+
+videoId = "sm9"
+
+headers = {
+  "X-Frontend-Id": "6",
+  "X-Frontend-Version": "0",
+  "Content-Type": "application/json"
+}
+
+res = requests.get("https://nvapi.nicovideo.jp/v1/comment/keys/thread?videoId="+videoId, headers=headers).json()
+
+threadKey = res["data"]["threadKey"]
+```
+
+ちなみに`threadKey`はJWTエンコードされていて、デコードすると`threadId`や有効期限、ログインしている状態で取得した場合はユーザーIDを見ることができます。
+
 # 通常コメントを投稿する(ログイン必須)
 次はコメントを投稿していきましょう。
 
